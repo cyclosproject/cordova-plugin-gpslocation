@@ -18,17 +18,15 @@
   under the License.
 -->
 
-<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
-xmlns:android="http://schemas.android.com/apk/res/android"
-           id="cordova-plugin-gpslocation"
-      version="1.0.0">
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0" 
+    xmlns:android="http://schemas.android.com/apk/res/android" id="cordova-plugin-gpslocation" version="1.0.0">
 
-    <name>Native GPS Location for Cordova - Android</name>
+    <name>Native GPS Location for Cordova - Android (Cyclos patch)</name>
     <description>Android geolocation plugin using GPS provider</description>
     <license>Apache 2.0</license>
     <keywords>cordova,geolocation,android,gps</keywords>
-    <repo>https://github.com/louisbl/cordova-gpslocation</repo>
-    <issue>https://github.com/louisbl/cordova-gpslocation/issues</issue>
+    <repo>https://github.com/cyclosproject/cordova-gpslocation</repo>
+    <issue>https://github.com/cyclosproject/cordova-gpslocation/issues</issue>
 
     <!-- android -->
     <platform name="android">

@@ -27,9 +27,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 
 /*
  * This class is the interface to the Geolocation.  It's bound to the geo object.
@@ -39,6 +43,10 @@ public class CordovaGPSLocation extends CordovaPlugin {
 
 	private CordovaLocationListener mListener;
 	private LocationManager mLocationManager;
+    private String action;
+    private JSONArray args;
+    private CallbackContext callbackContext;
+    final private int REQUEST_CODE_ASK_PERMISSIONS = 123;
 
 	LocationManager getLocationManager() {
 		return mLocationManager;
@@ -71,6 +79,18 @@ public class CordovaGPSLocation extends CordovaPlugin {
 
 		final String id = args.optString(0, "");
 
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int hasGpsPermission = cordova.getActivity().checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION);
+            if (hasGpsPermission != PackageManager.PERMISSION_GRANTED) {
+                cordova.getActivity().requestPermissions(new String[] { Manifest.permission.ACCESS_FINE_LOCATION },
+                    REQUEST_CODE_ASK_PERMISSIONS);
+                this.action = action;
+                this.args = args;
+                this.callbackContext = callbackContext;
+                return true;
+            }
+		}
+
 		if (action.equals("clearWatch")) {
 			clearWatch(id);
 			return true;
@@ -89,6 +109,28 @@ public class CordovaGPSLocation extends CordovaPlugin {
 
 		return true;
 	}
+
+	@Override
+    public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults)
+        throws JSONException {
+        switch (requestCode) {
+            case REQUEST_CODE_ASK_PERMISSIONS:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission Granted
+                    if (action.equals("getLocation")) {
+                        getLastLocation(args, callbackContext);
+                    } else if (action.equals("addWatch")) {
+                        String id = args.optString(0, "");
+                        addWatch(id, callbackContext);
+                    }
+                } else {
+                    callbackContext.error("GPS permission not granted");
+                }
+                break;
+            default:
+                super.onRequestPermissionResult(requestCode, permissions, grantResults);
+        }
+    }
 
 	/**
 	 * Called when the activity is to be shut down. Stop listener.
