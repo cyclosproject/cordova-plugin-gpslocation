@@ -17,6 +17,7 @@
 #    under the License.
 -->
 
+# This plugin is used only for Android (we patched). For iOS we use the navigator api directly
 # Native GPS Location for Cordova - Android
 
 This plugin provides information about the device's location, such as
